@@ -1,5 +1,6 @@
 package com.ExpenseTracker.Authentication.Entities;
 
+
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
@@ -15,6 +16,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @Table(name = "RefreshTokens")
 public class RefreshToken {
 
