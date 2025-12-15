@@ -1,6 +1,7 @@
 package com.ExpenseTracker.Authentication.Services;
 
 import com.ExpenseTracker.Authentication.Entities.UserInfo;
+import com.ExpenseTracker.Authentication.EventProducers.UserInfoEvent;
 import com.ExpenseTracker.Authentication.EventProducers.UserInfoProducer;
 import com.ExpenseTracker.Authentication.Repository.UserRepository;
 import com.ExpenseTracker.Authentication.model.UserInfoDto;
@@ -67,7 +68,17 @@ public class UserDetailServiceImpl implements UserDetailsService {
         String userId = UUID.randomUUID().toString();
         userRepository.save(new UserInfo(userId, userInfoDto.getUsername(), userInfoDto.getPassword(), new HashSet<>()));
         // pushEventToQueue
-        userInfoProducer.sendEventToKafka(userInfoDto);
+        userInfoProducer.sendEventToKafka(userInfoEventMapper(userId , userInfoDto));
         return true;
+    }
+
+    private UserInfoEvent userInfoEventMapper(String userId, UserInfoDto userInfoDto){
+        return UserInfoEvent.builder()
+                .firstName(userInfoDto.getFirstName())
+                .lastName(userInfoDto.getLastName())
+                .email(userInfoDto.getLastName())
+                .userId(userId)
+                .phoneNumber(userInfoDto.getPhoneNumber())
+                .build();
     }
 }
