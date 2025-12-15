@@ -5,16 +5,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 
+@Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class UserInfoDTO {
+public class UserInfo {
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @Id
     @JsonProperty("user_id")
@@ -39,14 +45,4 @@ public class UserInfoDTO {
 
     @JsonProperty("profile_pic")
     private String profilePic;
-
-    public UserInfo transformToUserInfo(){
-        return UserInfo.builder()
-                .userId(userId)
-                .email(email)
-                .firstName(firstName)
-                .lastName(lastName)
-                .profilePic(profilePic)
-                .build();
-    }
 }

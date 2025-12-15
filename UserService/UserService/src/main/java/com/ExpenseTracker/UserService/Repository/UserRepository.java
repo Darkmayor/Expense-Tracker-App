@@ -1,11 +1,14 @@
 package com.ExpenseTracker.UserService.Repository;
 
+import com.ExpenseTracker.UserService.Entities.UserInfo;
 import com.ExpenseTracker.UserService.Entities.UserInfoDTO;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface UserRepository extends CrudRepository<UserInfoDTO , String> {
+import java.util.Optional;
 
-    UserInfoDTO findByUserId(String userId);
+@Repository
+public interface UserRepository extends CrudRepository<UserInfo, String> {
+
+    Optional<UserInfo> findByUserId(String userId);
 }
