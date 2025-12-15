@@ -1,24 +1,23 @@
 package com.ExpenseTracker.Authentication.Serializer;
 
-import com.ExpenseTracker.Authentication.model.UserInfoDto;
+import com.ExpenseTracker.Authentication.EventProducers.UserInfoEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Serializer;
 
 import java.util.Map;
 
-public class UserInfoSerializer implements Serializer<UserInfoDto> {
+public class UserInfoSerializer implements Serializer<UserInfoEvent> {
     @Override
     public void configure(Map<String, ?> configs, boolean isKey) {
     }
 
     @Override
-    public byte[] serialize(String s, UserInfoDto userInfoDto) {
+    public byte[] serialize(String s, UserInfoEvent userInfoEvent) {
         byte[] serializedData = null;
         ObjectMapper mapper = new ObjectMapper();
         try{
-            serializedData = mapper.writeValueAsString(s).getBytes();
+            serializedData = mapper.writeValueAsString(userInfoEvent).getBytes();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
