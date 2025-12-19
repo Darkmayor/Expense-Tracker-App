@@ -16,7 +16,6 @@ import lombok.*;
 @Builder
 public class UserInfoDTO {
 
-    @Id
     @JsonProperty("user_id")
     @NonNull
     private String userId;

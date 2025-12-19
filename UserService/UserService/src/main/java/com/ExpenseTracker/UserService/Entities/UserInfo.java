@@ -11,15 +11,15 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 @Entity
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
+
 public class UserInfo {
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private Long id;
 
     @Id

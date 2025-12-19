@@ -4,28 +4,31 @@ package com.ExpenseTracker.UserService.Consumer;
 import com.ExpenseTracker.UserService.Entities.UserInfo;
 import com.ExpenseTracker.UserService.Entities.UserInfoDTO;
 import com.ExpenseTracker.UserService.Repository.UserRepository;
-
+import com.ExpenseTracker.UserService.Services.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
 
-
+@Service
+@Slf4j
 public class AuthServiceConsumer {
 
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
-    public AuthServiceConsumer(UserRepository userRepository){
-        this.userRepository = userRepository;
+    public AuthServiceConsumer(UserService userService){
+        this.userService = userService;
     }
 
     @KafkaListener(topics = "${spring.kafka.topic-json.name}" , groupId = "${spring.kafka.consumer.group-id}")
     public void listener(UserInfoDTO eventData){
         try{
-            UserInfo userInfo = eventData.transformToUserInfo();
-            userRepository.save(userInfo);
+            userService.SaveUser(eventData);
         }catch (Exception e){
-
+            e.printStackTrace();
+            log.error("Failed to consume the event");
         }
     }
 }
