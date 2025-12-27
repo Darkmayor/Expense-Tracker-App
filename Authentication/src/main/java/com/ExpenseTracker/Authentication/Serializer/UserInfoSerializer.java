@@ -14,6 +14,9 @@ public class UserInfoSerializer implements Serializer<UserInfoEvent> {
 
     @Override
     public byte[] serialize(String s, UserInfoEvent userInfoEvent) {
+        if(userInfoEvent == null){
+            return null;
+        }
         byte[] serializedData = null;
         ObjectMapper mapper = new ObjectMapper();
         try{
