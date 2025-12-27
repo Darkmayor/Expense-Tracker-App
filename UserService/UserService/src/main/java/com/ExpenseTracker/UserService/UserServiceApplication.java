@@ -15,6 +15,6 @@ public class UserServiceApplication {
 
     @Bean
     public ObjectMapper objectMapper(){
-        return new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        return new ObjectMapper();
     }
 }

@@ -1,9 +1,6 @@
 package com.ExpenseTracker.UserService.Consumer;
 
-
-import com.ExpenseTracker.UserService.Entities.UserInfo;
 import com.ExpenseTracker.UserService.Entities.UserInfoDTO;
-import com.ExpenseTracker.UserService.Repository.UserRepository;
 import com.ExpenseTracker.UserService.Services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +22,7 @@ public class AuthServiceConsumer {
     @KafkaListener(topics = "${spring.kafka.topic-json.name}" , groupId = "${spring.kafka.consumer.group-id}")
     public void listener(UserInfoDTO eventData){
         try{
+            System.out.println("Event consumed");
             userService.SaveUser(eventData);
         }catch (Exception e){
             e.printStackTrace();
