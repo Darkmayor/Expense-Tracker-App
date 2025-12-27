@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/user/v1/getUser")
-    public ResponseEntity<UserInfoDTO> getUser(UserInfoDTO userInfoDTO){
+    public ResponseEntity<UserInfoDTO> getUser(@RequestBody UserInfoDTO userInfoDTO){
         try{
             UserInfoDTO user = userService.getUser(userInfoDTO);
             return new ResponseEntity<>(user , HttpStatus.OK);

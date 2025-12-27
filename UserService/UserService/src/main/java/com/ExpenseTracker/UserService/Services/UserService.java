@@ -3,6 +3,7 @@ package com.ExpenseTracker.UserService.Services;
 import com.ExpenseTracker.UserService.Entities.UserInfo;
 import com.ExpenseTracker.UserService.Entities.UserInfoDTO;
 import com.ExpenseTracker.UserService.Repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +18,10 @@ public class UserService {
     private UserRepository userRepository;
 
 
+    @Transactional
     public UserInfoDTO SaveUser(UserInfoDTO userInfoDTO){
        UnaryOperator<UserInfo> updatedUser = user->{
-           user.setUserId(userInfoDTO.getUserId());
-           user.setEmail(userInfoDTO.getEmail());
-           user.setFirstName(userInfoDTO.getFirstName());
-           user.setLastName(userInfoDTO.getLastName());
-           user.setProfilePic(userInfoDTO.getProfilePic());
-            return userRepository.save(user);
+           return userRepository.save(userInfoDTO.transformToUserInfo());
         };
 
         Supplier<UserInfo> createUser =  () -> {

@@ -16,6 +16,7 @@ import lombok.*;
 @Builder
 public class UserInfoDTO {
 
+    private Long id;
     @JsonProperty("user_id")
     @NonNull
     private String userId;
@@ -46,6 +47,7 @@ public class UserInfoDTO {
                 .firstName(firstName)
                 .lastName(lastName)
                 .profilePic(profilePic)
+                .phoneNumber(phoneNumber)
                 .build();
     }
 }
