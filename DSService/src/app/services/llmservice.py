@@ -2,7 +2,7 @@ import os
 from langchain_core.prompts import ChatPromptTemplate
 
 from langchain_mistralai import ChatMistralAI
-from services.Expense import Expense
+from app.services.Expense import Expense
 from dotenv import load_dotenv
 
 class LLMService:
