@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -71,6 +72,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
         // pushEventToQueue
         userInfoProducer.sendEventToKafka(userInfoEventMapper(userId , userInfoDto));
         return true;
+    }
+    public String getUserByUsername(String userName){
+        return Optional.of(userRepository.findByUsername(userName)).map(UserInfo::getUserId).orElse(null);
     }
 
     private UserInfoEvent userInfoEventMapper(String userId, UserInfoDto userInfoDto){
