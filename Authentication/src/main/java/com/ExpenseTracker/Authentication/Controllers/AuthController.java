@@ -10,9 +10,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Objects;
 
 @AllArgsConstructor
 @RestController
@@ -45,4 +50,22 @@ public class AuthController
        }
    }
 
+   @GetMapping("auth/v1/ping")
+    public ResponseEntity<String> validRequest(){
+       //if authenticate
+       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+       if(authentication.isAuthenticated() && authentication != null){
+          //extract user id
+           String userName = userDetailsService.getUserByUsername(authentication.getName());
+           if(Objects.nonNull(userName)){
+               return new ResponseEntity<>(userName , HttpStatus.OK);
+           }
+       }
+           return new ResponseEntity<>("Some error in authentication system" , HttpStatus.UNAUTHORIZED);
+   }
+
+    @GetMapping("/health")
+    public ResponseEntity<Boolean> checkHealth(){
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
 }
