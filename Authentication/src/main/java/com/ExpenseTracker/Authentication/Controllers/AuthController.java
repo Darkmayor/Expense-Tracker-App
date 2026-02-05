@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,33 +37,40 @@ public class AuthController
    @PostMapping("auth/v1/signup")
    public ResponseEntity SignUp(@RequestBody UserInfoDto userInfoDto){
        try{
-           Boolean isSignUped = userDetailsService.signupUser(userInfoDto);
-           if(Boolean.FALSE.equals(isSignUped)){
+           String userId = userDetailsService.signupUser(userInfoDto);
+           if(Objects.isNull(userId)){
                return new ResponseEntity<>("Already Exist", HttpStatus.BAD_REQUEST);
            }
            RefreshToken refreshToken = refreshTokenService.createRefreshToken(userInfoDto.getUsername());
            String jwtToken = jwtService.GenerateToken(userInfoDto.getUsername());
-           return new ResponseEntity<>(
-                   JwtResponseDTO.builder().accessToken(jwtToken).
-                   token(refreshToken.getToken()).build(), HttpStatus.OK);
+           return new ResponseEntity<>(JwtResponseDTO.builder().accessToken(jwtToken).
+                   token(refreshToken.getToken()).userId(userId).build(), HttpStatus.OK);
        }catch (Exception ex){
            return new ResponseEntity<>("Exception in User Service", HttpStatus.INTERNAL_SERVER_ERROR);
        }
    }
 
-   @GetMapping("auth/v1/ping")
-    public ResponseEntity<String> validRequest(){
-       //if authenticate
-       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-       if(authentication.isAuthenticated() && authentication != null){
-          //extract user id
-           String userName = userDetailsService.getUserByUsername(authentication.getName());
-           if(Objects.nonNull(userName)){
-               return new ResponseEntity<>(userName , HttpStatus.OK);
-           }
-       }
-           return new ResponseEntity<>("Some error in authentication system" , HttpStatus.UNAUTHORIZED);
-   }
+    @GetMapping("/auth/v1/ping")
+    public ResponseEntity<String> validRequest() {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null ||
+                authentication instanceof AnonymousAuthenticationToken) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String username = authentication.getName();
+        String userId = userDetailsService.getUserByUsername(username);
+
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return ResponseEntity.ok(userId);
+    }
+
 
     @GetMapping("/health")
     public ResponseEntity<Boolean> checkHealth(){

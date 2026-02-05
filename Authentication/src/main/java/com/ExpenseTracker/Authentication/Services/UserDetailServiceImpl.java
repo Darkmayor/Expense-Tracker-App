@@ -60,18 +60,18 @@ public class UserDetailServiceImpl implements UserDetailsService {
         return userRepository.findByUsername(userInfoDto.getUsername());
     }
 
-    public Boolean signupUser(UserInfoDto userInfoDto){
+    public String signupUser(UserInfoDto userInfoDto){
         //        ValidationUtil.validateUserAttributes(userInfoDto);
-        if(Objects.nonNull(checkIfUserAlreadyExist(userInfoDto))){
-            return false;
-        }
         userInfoDto.setPassword(passwordEncoder.encode(userInfoDto.getPassword()));
-
+        if(Objects.nonNull(checkIfUserAlreadyExist(userInfoDto))){
+            return null;
+        }
         String userId = UUID.randomUUID().toString();
-        userRepository.save(new UserInfo(userId, userInfoDto.getUsername(), userInfoDto.getPassword(), new HashSet<>()));
+        UserInfo userInfo = new UserInfo(userId, userInfoDto.getUsername(), userInfoDto.getPassword(), new HashSet<>());
+        userRepository.save(userInfo);
         // pushEventToQueue
         userInfoProducer.sendEventToKafka(userInfoEventMapper(userId , userInfoDto));
-        return true;
+        return userId;
     }
     public String getUserByUsername(String userName){
         return Optional.of(userRepository.findByUsername(userName)).map(UserInfo::getUserId).orElse(null);
