@@ -38,15 +38,16 @@ public class TokenController
 
     @PostMapping("auth/v1/login")
     public ResponseEntity AuthenticateAndGetToken(@RequestBody AuthRequestDto authRequestDTO){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequestDTO.getUserName(), authRequestDTO.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequestDTO.getUsername(), authRequestDTO.getPassword()));
         if(authentication.isAuthenticated()){
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequestDTO.getUserName());
-            String userId = userDetailService.getUserByUsername(authRequestDTO.getUserName());
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequestDTO.getUsername());
+            String fetchedUserId = userDetailService.getUserByUsername(authRequestDTO.getUsername());
 
-            if(Objects.nonNull(userId) && Objects.nonNull(refreshToken)){
+            if(Objects.nonNull(fetchedUserId) && Objects.nonNull(refreshToken)){
                 return new ResponseEntity<>(JwtResponseDTO.builder()
-                        .accessToken(jwtService.GenerateToken(authRequestDTO.getUserName()))
+                        .accessToken(jwtService.GenerateToken(authRequestDTO.getUsername()))
                         .token(refreshToken.getToken())
+                        .userId(fetchedUserId)
                         .build(), HttpStatus.OK);
             }
 
